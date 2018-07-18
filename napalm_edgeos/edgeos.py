@@ -461,14 +461,18 @@ class EdgeOSDriver(NetworkDriver):
         """
         'show ip bgp summary' output example:
         BGP router identifier 192.168.1.2, local AS number 64520
-        IPv4 Unicast - max multipaths: ebgp 1 ibgp 1
-        RIB entries 3, using 288 bytes of memory
-        Peers 3, using 13 KiB of memory
+        BGP table version is 2932495
+        93988 BGP AS-PATH entries
+        70 BGP community entries
 
         Neighbor        V    AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State/PfxRcd
-        192.168.1.1     4 64519    7226    7189        0    0    0 4d23h40m        1
+        192.168.1.1     4 64519    7226    7189        0    0    0 4d23h40m        696017
         192.168.1.3     4 64521    7132    7103        0    0    0 4d21h05m        0
         192.168.1.4     4 64522       0       0        0    0    0 never    Active
+
+        Total number of neighbors 3
+
+        Total number of Established sessions 3
         """
 
         output = self.device.send_command("show ip bgp summary")
@@ -487,7 +491,7 @@ class EdgeOSDriver(NetworkDriver):
         bgp_neighbor_data["global"]["peers"] = {}
 
         # delete the header and empty element
-        bgp_info = [i.strip() for i in output[6:-2] if i]
+        bgp_info = [i.strip() for i in output[6:-4] if i is not ""]
 
         for i in bgp_info:
             if len(i) > 0:
