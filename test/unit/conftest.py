@@ -6,7 +6,7 @@ from napalm.base.test import conftest as parent_conftest
 
 from napalm.base.test.double import BaseTestDouble
 
-from napalm_vyos import vyos
+from napalm_edgeos import edgeos
 
 
 @pytest.fixture(scope='class')
@@ -16,9 +16,9 @@ def set_device_parameters(request):
         request.cls.device.close()
     request.addfinalizer(fin)
 
-    request.cls.driver = vyos.VyOSDriver
-    request.cls.patched_driver = PatchedVyOSDriver
-    request.cls.vendor = 'vyos'
+    request.cls.driver = edgeos.EdgeOSDriver
+    request.cls.patched_driver = PatchedEdgeOSDriver
+    request.cls.vendor = 'edgeos'
     parent_conftest.set_device_parameters(request)
 
 
@@ -27,14 +27,14 @@ def pytest_generate_tests(metafunc):
     parent_conftest.pytest_generate_tests(metafunc, __file__)
 
 
-class PatchedVyOSDriver(vyos.VyOSDriver):
-    """Patched VyOS Driver."""
+class PatchedEdgeOSDriver(edgeos.EdgeOSDriver):
+    """Patched EdgeOS Driver."""
 
     def __init__(self, hostname, username, password, timeout=60, optional_args=None):
         super().__init__(hostname, username, password, timeout, optional_args)
 
         self.patched_attrs = ['device']
-        self.device = FakeVyOSDevice()
+        self.device = FakeEdgeOSDevice()
 
     def close(self):
         pass
@@ -48,8 +48,8 @@ class PatchedVyOSDriver(vyos.VyOSDriver):
         pass
 
 
-class FakeVyOSDevice(BaseTestDouble):
-    """VyOS device test double."""
+class FakeEdgeOSDevice(BaseTestDouble):
+    """EdgeOS device test double."""
 
     def send_command(self, command, **kwargs):
         filename = '{}.text'.format(self.sanitize_text(command))

@@ -13,7 +13,7 @@
 # the License.
 
 """
-Napalm driver for VyOS.
+Napalm driver for EdgeOS.
 
 Read napalm.readthedocs.org for more information.
 
@@ -38,7 +38,7 @@ from napalm.base.exceptions import ConnectionException, MergeConfigException, \
                                    CommandErrorException
 
 
-class VyOSDriver(NetworkDriver):
+class EdgeOSDriver(NetworkDriver):
 
     _MINUTE_SECONDS = 60
     _HOUR_SECONDS = 60 * _MINUTE_SECONDS
@@ -724,7 +724,7 @@ class VyOSDriver(NetworkDriver):
 
         facts = {
           "uptime": int(uptime),
-          "vendor": "VyOS",
+          "vendor": "EdgeOS",
           "os_version": version,
           "serial_number": snumber,
           "model": hwmodel,

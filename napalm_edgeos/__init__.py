@@ -12,13 +12,13 @@
 # License for the specific language governing permissions and limitations under
 # the License.
 
-"""napalm_vyos package."""
-from napalm_vyos.vyos import VyOSDriver
+"""napalm_edgeos package."""
+from napalm_edgeos.edgeos import EdgeOSDriver
 import pkg_resources
 
 try:
-    __version__ = pkg_resources.get_distribution('napalm-vyos').version
+    __version__ = pkg_resources.get_distribution('napalm-edgeos').version
 except pkg_resources.DistributionNotFound:
     __version__ = "Not installed"
 
-__all__ = ('VyOSDriver',)
+__all__ = ('EdgeOSDriver',)

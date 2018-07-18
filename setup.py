@@ -6,15 +6,15 @@ with open("requirements.txt", "r") as fs:
     reqs = [r for r in fs.read().splitlines()
             if (len(r) > 0 and not r.startswith("#"))]
 
-__author__ = 'Piotr Pieprzycki <piotr.pieprzycki@dreamlab.pl>'
+__author__ = 'Barney Sowood <barney@sowood.co.uk>'
 
 
 setup(
-    name="napalm-vyos",
+    name="napalm-edgeos",
     version="0.2.0",
     packages=find_packages(),
-    author="Piotr Pieprzycki",
-    author_email="piotr.pieprzycki@dreamlab.pl",
+    author="Barney Sowood",
+    author_email="barney@sowood.co.uk",
     description="Network Automation and Programmability Abstraction Layer with Multivendor support",
     classifiers=[
         'Topic :: Utilities',
