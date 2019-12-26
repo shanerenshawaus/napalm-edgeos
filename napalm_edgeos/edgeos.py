@@ -850,11 +850,11 @@ class EdgeOSDriver(NetworkDriver):
 
         deadline = timeout * count
 
-        command = "ping %s " % destination
-        command += "ttl %d " % ttl
-        command += "deadline %d " % deadline
-        command += "size %d " % size
-        command += "count %d " % count
+        command = "/bin/ping %s " % destination
+        command += "-t %d " % ttl
+        command += "-w %d " % deadline
+        command += "-s %d " % size
+        command += "-c %d " % count
         if source != "":
             command += "interface %s " % source
 
