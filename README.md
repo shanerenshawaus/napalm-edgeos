@@ -63,7 +63,7 @@ EdgeOS in version 1.10.x (tested 1.10.3)
 
 napalm==2.*
 paramiko
-netmiko>=1.1.0
+netmiko>=3.3.2
 vyattaconfparser
 
 

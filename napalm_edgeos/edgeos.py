@@ -23,6 +23,7 @@ Read napalm.readthedocs.org for more information.
 import re
 import os
 import tempfile
+import string
 
 import vyattaconfparser
 
@@ -95,7 +96,7 @@ class EdgeOSDriver(NetworkDriver):
             self.port = optional_args.get('port', 22)
 
     def open(self):
-        self.device = ConnectHandler(device_type='vyos',
+        self.device = ConnectHandler(device_type='ubiquiti_edgerouter',
                                      host=self.hostname,
                                      username=self.username,
                                      password=self.password,
