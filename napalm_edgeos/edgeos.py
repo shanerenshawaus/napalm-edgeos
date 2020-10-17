@@ -863,6 +863,8 @@ class EdgeOSDriver(NetworkDriver):
 
         if "Unknown host" in output_ping:
             err = "Unknown host"
+        elif "Network is unreachable" in output_ping:
+            err = "Network unreachable"
         else:
             err = ""
 
@@ -873,6 +875,7 @@ class EdgeOSDriver(NetworkDriver):
             # ['5', 'packets', 'transmitted,' '5', 'received,' '0%', 'packet',
             # 'loss,', 'time', '3997ms']
             packet_info = output_ping.split("\n")
+
 
             if len(packet_info[-1]) > 0:
                 packet_info = packet_info[-2]
