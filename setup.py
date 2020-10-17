@@ -26,7 +26,7 @@ setup(
         'Operating System :: POSIX :: Linux',
         'Operating System :: MacOS',
     ],
-    url="https://github.com/napalm-automation-community/napalm-vyos",
+    url="https://github.com/barneysowood/napalm-edgeos",
     include_package_data=True,
     install_requires=reqs,
 )
