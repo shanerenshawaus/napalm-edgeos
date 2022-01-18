@@ -613,6 +613,93 @@ class EdgeOSDriver(NetworkDriver):
             for match in re.finditer(pattern, output)
         }
 
+    def get_lldp_neighbors_detail(self):
+        # Multiple neighbors per port are not implemented
+        # The show lldp neighbors commands lists port descriptions, not IDs
+        output = self.device.send_command("show lldp neighbors detail")
+        '''-------------------------------------------------------------------------------",
+        "Interface:    itf0, via: LLDP, RID: 3, Time: 0 day, 00:13:16",
+        "  Chassis:     ",
+        "    ChassisID:    mac dc:2c:6e:1e:92:96",
+        "    SysName:      sw25",
+        "    SysDescr:     MikroTik RouterOS 7.2rc1 (testing) Dec/17/2021 19:54:53 CRS112-8P-4S",
+        "    MgmtIP:       192.168.2.223",
+        "    Capability:   Bridge, on",
+        "    Capability:   Router, on",
+        "  Port:        ",
+        "    PortID:       ifname bridge/ether5",
+        "    PortDescr:    Not received",
+        "    MDI Power:    supported: yes, enabled: yes, pair control: no",
+        "      Device type:  PSE",
+        "      Power pairs:  signal",
+        "      Class:        class 4",
+        "      Power type:   2",
+        "      Power Source: PSE",
+        "      Power Priority: unknown",
+        "      PD requested power Value: 0",
+        "      PSE allocated power Value: 13000",
+        "  LLDP-MED:    ",
+        "    Device Type:  unknown",'''
+
+        out = {}
+
+        for neighbor in output.split("-------------------------------------------------------------------------------\n"):
+            if neighbor == '' or neighbor == "LLDP neighbors:\n":
+                continue
+
+            d = {}
+            level_keys = []
+            old_level = 0
+            old_key = ''
+            for line in neighbor.split("\n"):
+                if ':' in line:
+                    k, v = line.split(':', 1)
+                    level = int((len(k)-len(k.lstrip())) / 2)
+                    k = k.lstrip()
+
+                    # move one level up
+                    if old_level < level:
+                        level_keys += [old_key, ]
+
+                    if old_level > level:
+                        level_keys = level_keys[:-1]
+
+                    key = '.'.join(level_keys + [k, ])
+                    if key in d:
+                        if isinstance(d[key], list):
+                            d[key] += [v.strip(), ]
+                        else:
+                            d[key] = [d[key], v.strip()]
+                    else:
+                        d[key] = v.strip()
+
+                    old_level = level
+                    old_key = k
+
+
+
+            interface_name = d['Interface'].split(',',1)[0]
+
+            cap = {}
+            for c in d.get('Interface.Chassis.Capability', []):
+                if ',' in c:
+                    k, v = c.split(', ', 1)
+                    cap[k] = (v == 'on')
+
+            out.setdefault(interface_name, [])
+            out[interface_name] += [{
+                "parent_interface": interface_name,
+                "remote_chassis_id": d.get('Interface.Chassis.ChassisID', None).replace('mac ', ''),
+                "remote_system_name": d.get('Interface.Chassis.SysName', None),
+                "remote_port": d.get('Interface.Port.PortID', None).replace('ifname ',''),
+                "remote_port_description": d.get('Interface.Port.PortDescr', None),
+                "remote_system_description": d.get('Interface.Chassis.SysDescr', None),
+                "remote_system_capab": list(cap.keys()),
+                "remote_system_enable_capab": list([x for x,y in cap.items() if y]),
+                },]
+
+        return out
+
     def get_interfaces_counters(self):
         # 'rx_unicast_packet', 'rx_broadcast_packets', 'tx_unicast_packets',
         # 'tx_multicast_packets' and 'tx_broadcast_packets' are not implemented yet
